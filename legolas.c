@@ -33,9 +33,11 @@ void        elf_dump(ElfObject *elf);
 
 static long file_size(FILE *fp);
 
+static FILE *out;
+
 int main(int argc, char *argv[]) {
   ElfObject elf;
-  FILE *in, *out;
+  FILE *in;
   int retval;
 
   if (argc < 3) {

@@ -15,6 +15,12 @@ typedef struct {
 
   /* Size of the file in bytes */
   long size;
+
+  /* Array of section headers. */
+  Elf32_Shdr *section_headers;
+
+  /* Section header string table. */
+  char *section_header_names;
 } Elf;
 
 static long file_size(FILE *fp) {
@@ -49,6 +55,10 @@ int Elf_init(FILE *fp, Elf *elf) {
     return -1;
   }
 
+  elf->section_headers = (void *)elf->header + elf->header->e_shoff;
+  elf->section_header_names = (void *)elf->header +
+    elf->section_headers[elf->header->e_shstrndx].sh_offset;
+
   return 0;
 }
 
@@ -58,6 +68,17 @@ Elf32_Shdr *Elf_section_header(Elf *elf, const char *name) {
 
 int Elf_free(Elf *elf) {
   return munmap(elf->header, elf->size);
+}
+
+void Elf_dump(Elf *elf) {
+  int i;
+  Elf32_Shdr *shdr;
+
+  printf("%d bytes\n", elf->size);
+  for (i = 0; i < elf->header->e_shnum; i++) {
+    char *name = elf->section_header_names + elf->section_headers[i].sh_name;
+    printf("%s\n", name);
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -76,7 +97,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  printf("%d\n", elf.size);
+  Elf_dump(&elf);
 
   fclose(fp);
   Elf_free(&elf);

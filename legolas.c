@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 typedef Elf32_Shdr SecHeader;
+typedef Elf32_Phdr PrgHeader;
 typedef Elf32_Ehdr ElfHeader;
 
 /* Represents an ELF relocatable object file. */
@@ -32,7 +33,7 @@ int         elf_free(ElfObject *elf);
 void        elf_dump(ElfObject *elf);
 
 static long file_size(FILE *fp);
-static size_t emit(void *data, size_t size);
+static size_t emit(void *data, long offset, size_t size);
 
 static FILE *out;
 
@@ -123,15 +124,50 @@ int elf_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
 }
 
+/*
+ * File layout:
+ * 0-51:    elf header
+ * 52-115:  program header table
+ * 128-139: .text
+ */
 void elf_dump(ElfObject *elf) {
-  ElfHeader eh = *(elf->header); // make a copy
-  eh.e_type = ET_EXEC;
-  eh.e_entry = 0x1337;
+  ElfHeader eh;
+  PrgHeader ph;
+  SecHeader *sh;
+  uint8_t *text;
 
-  emit(&eh, sizeof(eh));
+  sh = elf_find_sh(elf, ".text");
+  text = (void *)elf->header + sh->sh_offset;
+
+  ph.p_type   = PT_LOAD;
+  ph.p_offset = 0x0;        // why not sh->sh_offset?
+  ph.p_vaddr  = 0x8048000;  // not sure what this should be
+  ph.p_paddr  = ph.p_vaddr;
+  ph.p_filesz = sh->sh_offset + sh->sh_size;
+  ph.p_memsz  = ph.p_filesz;
+  ph.p_flags  = PF_X | PF_R;
+  ph.p_align  = 0x1000;
+
+  eh = *(elf->header); // make a copy
+  eh.e_type = ET_EXEC;
+  eh.e_entry = ph.p_vaddr + sh->sh_offset;
+  eh.e_phoff = eh.e_ehsize; // ph should come right after
+  eh.e_phnum = 1; // just .text for now
+  eh.e_phentsize = sizeof(ph);
+  eh.e_shoff = 0;
+  eh.e_shnum = 0;
+  eh.e_shentsize = 0;
+  eh.e_shstrndx = 0;
+
+  emit(&eh, 0, sizeof(eh));
+  emit(&ph, eh.e_phoff, sizeof(ph));
+  emit(text, sh->sh_offset, sh->sh_size);
 }
 
-static size_t emit(void *data, size_t size) {
+static size_t emit(void *data, long offset, size_t size) {
+  if (fseek(out, offset, SEEK_SET) < 0) {
+    return -1;
+  }
   return fwrite(data, size, 1, out);
 }
 

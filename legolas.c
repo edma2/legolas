@@ -31,16 +31,29 @@ SecHeader * Elf_find_sh(Elf *elf, const char *name);
 int         Elf_free(Elf *elf);
 void        Elf_dump(Elf *elf);
 
-static long file_size(FILE *fp) {
-  long size;
+static long file_size(FILE *fp);
 
-  if (fseek(fp, 0, SEEK_END) < 0) {
+int main(int argc, char *argv[]) {
+  Elf elf;
+  FILE *fp;
+
+  fp = fopen("/tmp/test", "r+");
+  if (fp == NULL) {
+    printf("fopen failed\n");
     return -1;
   }
-  size = ftell(fp); // could be negative
-  rewind(fp);
 
-  return size;
+  if (Elf_init(fp, &elf) < 0) {
+    printf("init failed\n");
+    fclose(fp);
+    return -1;
+  }
+  fclose(fp);
+
+  Elf_dump(&elf);
+  Elf_free(&elf);
+
+  return 0;
 }
 
 /* Initialize elf by memory mapping file contents.
@@ -101,25 +114,14 @@ void Elf_dump(Elf *elf) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  Elf elf;
-  FILE *fp;
+static long file_size(FILE *fp) {
+  long size;
 
-  fp = fopen("/tmp/test", "r+");
-  if (fp == NULL) {
-    printf("fopen failed\n");
+  if (fseek(fp, 0, SEEK_END) < 0) {
     return -1;
   }
+  size = ftell(fp); // could be negative
+  rewind(fp);
 
-  if (Elf_init(fp, &elf) < 0) {
-    printf("init failed\n");
-    fclose(fp);
-    return -1;
-  }
-  fclose(fp);
-
-  Elf_dump(&elf);
-  Elf_free(&elf);
-
-  return 0;
+  return size;
 }

@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   Elf elf;
   FILE *fp;
 
-  fp = fopen("/tmp/test", "r+");
+  fp = fopen(argv[1], "r+");
   if (fp == NULL) {
     printf("fopen failed\n");
     return -1;
@@ -112,6 +112,8 @@ void Elf_dump(Elf *elf) {
   if (sh != NULL) {
     printf(".text offset: 0x%x\n", sh->sh_offset);
   }
+
+  printf("entry: 0x%x\n", elf->header->e_entry);
 }
 
 static long file_size(FILE *fp) {

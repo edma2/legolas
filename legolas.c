@@ -8,22 +8,22 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-typedef Elf32_Shdr Shdr;
-typedef Elf32_Ehdr Ehdr;
+typedef Elf32_Shdr SecHeader;
+typedef Elf32_Ehdr ElfHeader;
 
 /* Represents an ELF relocatable object file. */
 typedef struct {
   /* Offset 0 of file image. */
-  Ehdr *header;
+  ElfHeader *header;
 
   /* Size of the file in bytes */
   long size;
 
   /* Array of section headers. */
-  Shdr *section_headers;
+  SecHeader *sec_headers;
 
   /* Section header string table. */
-  char *section_header_names;
+  char *sec_header_names;
 } Elf;
 
 static long file_size(FILE *fp) {
@@ -58,23 +58,23 @@ int Elf_init(FILE *fp, Elf *elf) {
     return -1;
   }
 
-  elf->section_headers = (void *)elf->header + elf->header->e_shoff;
-  elf->section_header_names = (void *)elf->header +
-    elf->section_headers[elf->header->e_shstrndx].sh_offset;
+  elf->sec_headers = (void *)elf->header + elf->header->e_shoff;
+  elf->sec_header_names = (void *)elf->header +
+    elf->sec_headers[elf->header->e_shstrndx].sh_offset;
 
   return 0;
 }
 
 /* Find section header by name, or NULL if didn't find it. */
-Shdr *Elf_section_header(Elf *elf, const char *name) {
+SecHeader *Elf_find_sec_header(Elf *elf, const char *name) {
   int i;
-  Shdr *header;
+  SecHeader *sh;
 
   for (i = 0; i < elf->header->e_shnum; i++) {
-    header = &(elf->section_headers[i]);
-    char *found = elf->section_header_names + header->sh_name;
+    sh = &(elf->sec_headers[i]);
+    char *found = elf->sec_header_names + sh->sh_name;
     if (strcmp(found, name) == 0) {
-      return header;
+      return sh;
     }
   }
 
@@ -87,12 +87,12 @@ int Elf_free(Elf *elf) {
 
 void Elf_dump(Elf *elf) {
   int i;
-  Shdr *header;
+  SecHeader *sh;
 
   printf("%d bytes\n", elf->size);
-  header = Elf_section_header(elf, ".text");
-  if (header != NULL) {
-    printf(".text offset: 0x%x\n", header->sh_offset);
+  sh = Elf_find_sec_header(elf, ".text");
+  if (sh != NULL) {
+    printf(".text offset: 0x%x\n", sh->sh_offset);
   }
 }
 

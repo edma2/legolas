@@ -35,23 +35,40 @@ static long file_size(FILE *fp);
 
 int main(int argc, char *argv[]) {
   ElfObject elf;
-  FILE *fp;
+  FILE *in, *out;
+  int retval;
 
-  fp = fopen(argv[1], "r+");
-  if (fp == NULL) {
-    printf("fopen failed\n");
+  if (argc < 2) {
+    printf("usage: %s <input> <output>\n", argv[0]);
     return -1;
   }
 
-  if (elf_init(fp, &elf) < 0) {
-    printf("init failed\n");
-    fclose(fp);
+  in = fopen(argv[1], "r+");
+  if (in == NULL) {
+    printf("Failed to open input file\n");
     return -1;
   }
-  fclose(fp);
+
+  out = fopen(argv[2], "w");
+  if (out == NULL) {
+    printf("Failed to open output file\n");
+    fclose(in);
+    return -1;
+  }
+
+  retval = elf_init(in, &elf);
+  fclose(in);
+
+  if (retval < 0) {
+    printf("elf_init failed\n");
+    fclose(out);
+    return -1;
+  }
 
   elf_dump(&elf);
+
   elf_free(&elf);
+  fclose(out);
 
   return 0;
 }

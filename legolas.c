@@ -28,7 +28,6 @@ static long file_size(FILE *fp) {
   return size;
 }
 
-/* Return -1 on failure and set error string. */
 int ObjectFile_init(FILE *fp, ObjectFile *elf) {
   int fd;
 
@@ -50,6 +49,10 @@ int ObjectFile_init(FILE *fp, ObjectFile *elf) {
   return 0;
 }
 
+int ObjectFile_free(ObjectFile *elf) {
+  return munmap(elf->header, elf->size);
+}
+
 int main(int argc, char *argv[]) {
   ObjectFile elf;
   FILE *fp;
@@ -67,6 +70,7 @@ int main(int argc, char *argv[]) {
   }
 
   fclose(fp);
+  ObjectFile_free(&elf);
 
   return 0;
 }

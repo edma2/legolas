@@ -24,17 +24,17 @@ typedef struct {
 
   /* Section header string table. */
   char *sh_names;
-} Elf;
+} ElfObject;
 
-int         Elf_init(FILE *fp, Elf *elf);
-SecHeader * Elf_find_sh(Elf *elf, const char *name);
-int         Elf_free(Elf *elf);
-void        Elf_dump(Elf *elf);
+int         elf_init(FILE *fp, ElfObject *elf);
+SecHeader * elf_find_sh(ElfObject *elf, const char *name);
+int         elf_free(ElfObject *elf);
+void        elf_dump(ElfObject *elf);
 
 static long file_size(FILE *fp);
 
 int main(int argc, char *argv[]) {
-  Elf elf;
+  ElfObject elf;
   FILE *fp;
 
   fp = fopen(argv[1], "r+");
@@ -43,22 +43,22 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  if (Elf_init(fp, &elf) < 0) {
+  if (elf_init(fp, &elf) < 0) {
     printf("init failed\n");
     fclose(fp);
     return -1;
   }
   fclose(fp);
 
-  Elf_dump(&elf);
-  Elf_free(&elf);
+  elf_dump(&elf);
+  elf_free(&elf);
 
   return 0;
 }
 
 /* Initialize elf by memory mapping file contents.
  * You can safely close fp after calling this function. */
-int Elf_init(FILE *fp, Elf *elf) {
+int elf_init(FILE *fp, ElfObject *elf) {
   int fd;
 
   elf->size = file_size(fp);
@@ -84,7 +84,7 @@ int Elf_init(FILE *fp, Elf *elf) {
 }
 
 /* Find section header by name, or NULL if didn't find it. */
-SecHeader *Elf_find_sh(Elf *elf, const char *name) {
+SecHeader *elf_find_sh(ElfObject *elf, const char *name) {
   int i;
   SecHeader *sh;
 
@@ -99,16 +99,15 @@ SecHeader *Elf_find_sh(Elf *elf, const char *name) {
   return NULL;
 }
 
-int Elf_free(Elf *elf) {
+int elf_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
 }
 
-void Elf_dump(Elf *elf) {
-  int i;
+void elf_dump(ElfObject *elf) {
   SecHeader *sh;
 
-  printf("%d bytes\n", elf->size);
-  sh = Elf_find_sh(elf, ".text");
+  printf("%ld bytes\n", elf->size);
+  sh = elf_find_sh(elf, ".text");
   if (sh != NULL) {
     printf(".text offset: 0x%x\n", sh->sh_offset);
   }

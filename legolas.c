@@ -20,10 +20,10 @@ typedef struct {
   long size;
 
   /* Array of section headers. */
-  SecHeader *sec_headers;
+  SecHeader *sh_table;
 
   /* Section header string table. */
-  char *sec_header_names;
+  char *sh_names;
 } Elf;
 
 static long file_size(FILE *fp) {
@@ -58,9 +58,9 @@ int Elf_init(FILE *fp, Elf *elf) {
     return -1;
   }
 
-  elf->sec_headers = (void *)elf->header + elf->header->e_shoff;
-  elf->sec_header_names = (void *)elf->header +
-    elf->sec_headers[elf->header->e_shstrndx].sh_offset;
+  elf->sh_table = (void *)elf->header + elf->header->e_shoff;
+  elf->sh_names = (void *)elf->header +
+    elf->sh_table[elf->header->e_shstrndx].sh_offset;
 
   return 0;
 }
@@ -71,8 +71,8 @@ SecHeader *Elf_find_sec_header(Elf *elf, const char *name) {
   SecHeader *sh;
 
   for (i = 0; i < elf->header->e_shnum; i++) {
-    sh = &(elf->sec_headers[i]);
-    char *found = elf->sec_header_names + sh->sh_name;
+    sh = &(elf->sh_table[i]);
+    char *found = elf->sh_names + sh->sh_name;
     if (strcmp(found, name) == 0) {
       return sh;
     }

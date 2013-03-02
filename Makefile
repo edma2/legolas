@@ -1,8 +1,5 @@
-legolas: legolas.o
-	gcc -I . legolas.o -o legolas
-
-legolas.o:
-	gcc -I . -c legolas.c
+legolas: legolas.c
+	gcc -Wall -I . legolas.c -o legolas
 
 clean:
-	rm legolas.o legolas
+	rm legolas

@@ -92,7 +92,7 @@ void Elf_dump(Elf *elf) {
   printf("%d bytes\n", elf->size);
   header = Elf_section_header(elf, ".text");
   if (header != NULL) {
-    printf("offset: 0x%x\n", header->sh_size);
+    printf(".text offset: 0x%x\n", header->sh_offset);
   }
 }
 
@@ -111,10 +111,9 @@ int main(int argc, char *argv[]) {
     fclose(fp);
     return -1;
   }
+  fclose(fp);
 
   Elf_dump(&elf);
-
-  fclose(fp);
   Elf_free(&elf);
 
   return 0;

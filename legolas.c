@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   FILE *in, *out;
   int retval;
 
-  if (argc < 2) {
+  if (argc < 3) {
     printf("usage: %s <input> <output>\n", argv[0]);
     return -1;
   }

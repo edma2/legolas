@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-/* Represents an ELF relocatable. */
+/* Represents an ELF relocatable object file. */
 typedef struct {
   /* Offset 0 of file image. */
   Elf32_Ehdr *header;

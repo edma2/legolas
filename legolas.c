@@ -32,6 +32,7 @@ int         elf_free(ElfObject *elf);
 void        elf_dump(ElfObject *elf);
 
 static long file_size(FILE *fp);
+static size_t emit(void *data, size_t size);
 
 static FILE *out;
 
@@ -123,15 +124,15 @@ int elf_free(ElfObject *elf) {
 }
 
 void elf_dump(ElfObject *elf) {
-  SecHeader *sh;
+  ElfHeader eh = *(elf->header); // make a copy
+  eh.e_type = ET_EXEC;
+  eh.e_entry = 0x1337;
 
-  printf("%ld bytes\n", elf->size);
-  sh = elf_find_sh(elf, ".text");
-  if (sh != NULL) {
-    printf(".text offset: 0x%x\n", sh->sh_offset);
-  }
+  emit(&eh, sizeof(eh));
+}
 
-  printf("entry: 0x%x\n", elf->header->e_entry);
+static size_t emit(void *data, size_t size) {
+  return fwrite(data, size, 1, out);
 }
 
 static long file_size(FILE *fp) {

@@ -29,6 +29,8 @@ static long file_size(FILE *fp) {
   return size;
 }
 
+/* Initialize elf with file contents.
+ * You can safely close fp after calling this function. */
 int Elf_init(FILE *fp, Elf *elf) {
   int fd;
 

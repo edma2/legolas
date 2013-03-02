@@ -62,7 +62,19 @@ int Elf_init(FILE *fp, Elf *elf) {
   return 0;
 }
 
+/* Find section header by name, or NULL if didn't find it. */
 Elf32_Shdr *Elf_section_header(Elf *elf, const char *name) {
+  int i;
+  Elf32_Shdr *header;
+
+  for (i = 0; i < elf->header->e_shnum; i++) {
+    header = &(elf->section_headers[i]);
+    char *found = elf->section_header_names + header->sh_name;
+    if (strcmp(found, name) == 0) {
+      return header;
+    }
+  }
+
   return NULL;
 }
 
@@ -72,12 +84,12 @@ int Elf_free(Elf *elf) {
 
 void Elf_dump(Elf *elf) {
   int i;
-  Elf32_Shdr *shdr;
+  Elf32_Shdr *header;
 
   printf("%d bytes\n", elf->size);
-  for (i = 0; i < elf->header->e_shnum; i++) {
-    char *name = elf->section_header_names + elf->section_headers[i].sh_name;
-    printf("%s\n", name);
+  header = Elf_section_header(elf, ".text");
+  if (header != NULL) {
+    printf("offset: 0x%x\n", header->sh_size);
   }
 }
 

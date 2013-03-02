@@ -8,13 +8,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+/* Represents an ELF relocatable. */
 typedef struct {
   /* Offset 0 of file image. */
   Elf32_Ehdr *header;
 
   /* Size of the file in bytes */
   long size;
-} ObjectFile;
+} Elf;
 
 static long file_size(FILE *fp) {
   long size;
@@ -28,7 +29,7 @@ static long file_size(FILE *fp) {
   return size;
 }
 
-int ObjectFile_init(FILE *fp, ObjectFile *elf) {
+int Elf_init(FILE *fp, Elf *elf) {
   int fd;
 
   elf->size = file_size(fp);
@@ -49,12 +50,16 @@ int ObjectFile_init(FILE *fp, ObjectFile *elf) {
   return 0;
 }
 
-int ObjectFile_free(ObjectFile *elf) {
+Elf32_Shdr *Elf_section_header(Elf *elf, const char *name) {
+  return NULL;
+}
+
+int Elf_free(Elf *elf) {
   return munmap(elf->header, elf->size);
 }
 
 int main(int argc, char *argv[]) {
-  ObjectFile elf;
+  Elf elf;
   FILE *fp;
 
   fp = fopen("/tmp/test", "r+");
@@ -63,14 +68,16 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  if (ObjectFile_init(fp, &elf) < 0) {
+  if (Elf_init(fp, &elf) < 0) {
     printf("init failed\n");
     fclose(fp);
     return -1;
   }
 
+  printf("%d\n", elf.size);
+
   fclose(fp);
-  ObjectFile_free(&elf);
+  Elf_free(&elf);
 
   return 0;
 }

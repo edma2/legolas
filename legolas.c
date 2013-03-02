@@ -8,16 +8,19 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+typedef Elf32_Shdr Shdr;
+typedef Elf32_Ehdr Ehdr;
+
 /* Represents an ELF relocatable object file. */
 typedef struct {
   /* Offset 0 of file image. */
-  Elf32_Ehdr *header;
+  Ehdr *header;
 
   /* Size of the file in bytes */
   long size;
 
   /* Array of section headers. */
-  Elf32_Shdr *section_headers;
+  Shdr *section_headers;
 
   /* Section header string table. */
   char *section_header_names;
@@ -63,9 +66,9 @@ int Elf_init(FILE *fp, Elf *elf) {
 }
 
 /* Find section header by name, or NULL if didn't find it. */
-Elf32_Shdr *Elf_section_header(Elf *elf, const char *name) {
+Shdr *Elf_section_header(Elf *elf, const char *name) {
   int i;
-  Elf32_Shdr *header;
+  Shdr *header;
 
   for (i = 0; i < elf->header->e_shnum; i++) {
     header = &(elf->section_headers[i]);
@@ -84,7 +87,7 @@ int Elf_free(Elf *elf) {
 
 void Elf_dump(Elf *elf) {
   int i;
-  Elf32_Shdr *header;
+  Shdr *header;
 
   printf("%d bytes\n", elf->size);
   header = Elf_section_header(elf, ".text");

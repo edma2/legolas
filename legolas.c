@@ -26,6 +26,11 @@ typedef struct {
   char *sh_names;
 } Elf;
 
+int         Elf_init(FILE *fp, Elf *elf);
+SecHeader * Elf_find_sh(Elf *elf, const char *name);
+int         Elf_free(Elf *elf);
+void        Elf_dump(Elf *elf);
+
 static long file_size(FILE *fp) {
   long size;
 
@@ -66,7 +71,7 @@ int Elf_init(FILE *fp, Elf *elf) {
 }
 
 /* Find section header by name, or NULL if didn't find it. */
-SecHeader *Elf_find_sec_header(Elf *elf, const char *name) {
+SecHeader *Elf_find_sh(Elf *elf, const char *name) {
   int i;
   SecHeader *sh;
 
@@ -90,7 +95,7 @@ void Elf_dump(Elf *elf) {
   SecHeader *sh;
 
   printf("%d bytes\n", elf->size);
-  sh = Elf_find_sec_header(elf, ".text");
+  sh = Elf_find_sh(elf, ".text");
   if (sh != NULL) {
     printf(".text offset: 0x%x\n", sh->sh_offset);
   }

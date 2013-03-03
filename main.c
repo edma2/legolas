@@ -1,7 +1,7 @@
 #include <object.h>
 
 int main(int argc, char *argv[]) {
-  Object obj;
+  ElfObject elf;
   FILE *in;
   int retval;
 
@@ -16,18 +16,18 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  retval = obj_init(in, &obj);
+  retval = ElfObject_init(in, &elf);
   fclose(in);
 
   if (retval < 0) {
-    obj_free(&obj);
-    printf("obj_init failed\n");
+    ElfObject_free(&elf);
+    printf("ElfObject_init failed\n");
     return -1;
   }
 
-  printf("%s\n", obj.header->e_ident);
+  printf("%s\n", elf.header->e_ident);
 
-  obj_free(&obj);
+  ElfObject_free(&elf);
 
   return 0;
 }

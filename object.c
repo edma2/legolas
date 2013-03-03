@@ -15,11 +15,11 @@ static long file_size(FILE *fp) {
 
 /* Initialize object file by memory mapping file contents.
  * You can safely close fp after calling this function. */
-int obj_init(FILE *fp, Object *obj) {
+int ElfObject_init(FILE *fp, ElfObject *elf) {
   int fd;
 
-  obj->size = file_size(fp);
-  if (obj->size < 0) {
+  elf->size = file_size(fp);
+  if (elf->size < 0) {
     return -1;
   }
 
@@ -28,19 +28,19 @@ int obj_init(FILE *fp, Object *obj) {
     return -1;
   }
 
-  obj->header = mmap(NULL, obj->size, PROT_READ, MAP_SHARED, fd, 0);
-  if (obj->header == MAP_FAILED) {
+  elf->header = mmap(NULL, elf->size, PROT_READ, MAP_SHARED, fd, 0);
+  if (elf->header == MAP_FAILED) {
     return -1;
   }
 
-  obj->sh_table = (void *)obj->header + obj->header->e_shoff;
-  obj->sh_names = (void *)obj->header +
-    obj->sh_table[obj->header->e_shstrndx].sh_offset;
+  elf->sh_table = (void *)elf->header + elf->header->e_shoff;
+  elf->sh_names = (void *)elf->header +
+    elf->sh_table[elf->header->e_shstrndx].sh_offset;
 
   return 0;
 }
 
 /* Unmap file image. */
-int obj_free(Object *obj) {
-  return munmap(obj->header, obj->size);
+int ElfObject_free(ElfObject *elf) {
+  return munmap(elf->header, elf->size);
 }

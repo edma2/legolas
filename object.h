@@ -3,23 +3,23 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-typedef Elf32_Shdr SectionHdr;
-typedef Elf32_Ehdr ElfHdr;
+typedef Elf32_Shdr SectionHeader;
+typedef Elf32_Ehdr ElfHeader;
 
 /* An object file. */
 typedef struct {
   /* Offset 0 of file image. */
-  ElfHdr *header;
+  ElfHeader *header;
 
   /* Size of the file in bytes */
   long size;
 
   /* Array of section headers. */
-  SectionHdr *sh_table;
+  SectionHeader *sh_table;
 
   /* Section header string table. */
   char *sh_names;
-} Object;
+} ElfObject;
 
-int obj_init(FILE *fp, Object *obj);
-int obj_free(Object *obj);
+int ElfObject_init(FILE *fp, ElfObject *elf);
+int ElfObject_free(ElfObject *elf);

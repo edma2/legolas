@@ -31,5 +31,3 @@ int         elf_init(FILE *fp, ElfObject *elf);
 SecHeader * elf_find_sh(ElfObject *elf, const char *name);
 int         elf_free(ElfObject *elf);
 void        elf_dump(ElfObject *elf);
-
-extern FILE *out;

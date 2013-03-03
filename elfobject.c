@@ -1,9 +1,6 @@
 #include "elfobject.h"
 
-static size_t emit(void *data, long offset, size_t size);
 static long file_size(FILE *fp);
-
-FILE *out;
 
 /* Initialize elf by memory mapping file contents.
  * You can safely close fp after calling this function. */
@@ -50,13 +47,6 @@ SecHeader *elf_find_sh(ElfObject *elf, const char *name) {
 
 int elf_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
-}
-
-static size_t emit(void *data, long offset, size_t size) {
-  if (fseek(out, offset, SEEK_SET) < 0) {
-    return -1;
-  }
-  return fwrite(data, size, 1, out);
 }
 
 static long file_size(FILE *fp) {

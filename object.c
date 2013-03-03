@@ -1,4 +1,4 @@
-#include "object.h"
+#include <object.h>
 
 /* Get file size given file pointer. */
 static long file_size(FILE *fp) {

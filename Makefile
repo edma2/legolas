@@ -1,5 +1,5 @@
-main: main.c elfobject.c
-	gcc -Wall -I . main.c elfobject.c -o main
+main: main.c object.c
+	gcc -Wall -I . main.c object.c -o main
 
 example.o: example/test.asm
 	nasm -f elf example/test.asm -o example/test.o

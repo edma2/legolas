@@ -25,6 +25,8 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
+  printf("%s\n", obj.header->e_ident);
+
   obj_free(&obj);
 
   return 0;

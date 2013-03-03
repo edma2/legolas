@@ -3,19 +3,19 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
-typedef Elf32_Shdr SecHeader;
-typedef Elf32_Ehdr ElfHeader;
+typedef Elf32_Shdr SectionHdr;
+typedef Elf32_Ehdr ElfHdr;
 
 /* An object file. */
 typedef struct {
   /* Offset 0 of file image. */
-  ElfHeader *header;
+  ElfHdr *header;
 
   /* Size of the file in bytes */
   long size;
 
   /* Array of section headers. */
-  SecHeader *sh_table;
+  SectionHdr *sh_table;
 
   /* Section header string table. */
   char *sh_names;

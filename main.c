@@ -19,15 +19,13 @@ int main(int argc, char *argv[]) {
   retval = ElfObject_init(in, &elf);
   fclose(in);
 
-  if (retval < 0) {
-    ElfObject_free(&elf);
+  if (retval >= 0) {
+    printf("%s\n", elf.header->e_ident);
+  } else {
     printf("ElfObject_init failed\n");
-    return -1;
   }
-
-  printf("%s\n", elf.header->e_ident);
 
   ElfObject_free(&elf);
 
-  return 0;
+  return retval;
 }

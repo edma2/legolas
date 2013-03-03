@@ -6,7 +6,14 @@ section .text
   global _start
 
 _start:
-  ; exit(0)
+  ; sys_write
+  ;mov eax, 4
+  ;mov ebx, 1
+  ;mov ecx, msg
+  ;mov edx, msg_len
+  ;int 0x80
+
+  ; exit(eax = prev)
+  mov ebx, 8 ;test
   mov eax, 1
-  mov ebx, 0
-  int 80h
+  int 0x80

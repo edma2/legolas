@@ -6,10 +6,8 @@ EXAMPLES = example example.o
 
 PROGNAME = main
 
-test: all
-	./$(PROGNAME)
-
 all: $(PROGNAME) $(EXAMPLES)
+	valgrind ./$(PROGNAME)
 
 $(PROGNAME): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS)

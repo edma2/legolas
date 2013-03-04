@@ -72,7 +72,7 @@ int ElfObject_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
 }
 
-void ElfObject_print_symbols(ElfObject *elf) {
+static void ElfObject_print_symbols(ElfObject *elf) {
   int i;
   Elf32_Sym *sym;
 

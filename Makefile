@@ -6,6 +6,9 @@ EXAMPLES = example example.o
 
 PROGNAME = main
 
+test: all
+	./$(PROGNAME)
+
 all: $(PROGNAME) $(EXAMPLES)
 
 $(PROGNAME): $(OBJECTS)

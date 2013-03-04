@@ -1,4 +1,6 @@
 #include <object.h>
+#include <stdlib.h>
+#include <sys/mman.h>
 
 /* Get file size given file pointer. */
 static long file_size(FILE *fp) {

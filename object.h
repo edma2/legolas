@@ -1,7 +1,5 @@
 #include <elf.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/mman.h>
 
 typedef Elf32_Shdr SectionHeader;
 typedef Elf32_Ehdr ElfHeader;

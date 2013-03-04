@@ -1,5 +1,6 @@
-#include <object.h>
 #include <list.h>
+#include <object.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[]) {
   ElfObject elf;

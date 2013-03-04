@@ -1,11 +1,20 @@
-main: main.c object.c
-	gcc -Wall -I . main.c object.c -o main
+CC = gcc
+CFLAGS = -Wall -I.
 
-example.o: example/test.asm
-	nasm -f elf example/test.asm -o example/test.o
+OBJECTS = list.o object.o main.o
+
+PROGNAME = legolas
+
+all: $(PROGNAME)
+
+$(PROGNAME): $(OBJECTS)
+	$(CC) -o $@ $(OBJECTS)
 
 example: example.o
-	ld -o example/test example/test.o
+	ld -o example example.o
+
+example.o: example.asm
+	nasm -f elf example.asm -o example.o
 
 clean:
-	rm -f main example/test example/test.o
+	rm -f $(PROGNAME) $(OBJECTS) example example.o

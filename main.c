@@ -1,9 +1,12 @@
 #include <object.h>
+#include <list.h>
 
 int main(int argc, char *argv[]) {
   ElfObject elf;
   FILE *in;
   int retval;
+
+  List_test();
 
   if (argc < 2) {
     printf("usage: %s <input>\n", argv[0]);

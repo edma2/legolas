@@ -6,7 +6,7 @@ EXAMPLES = example example.o
 
 PROGNAME = main
 
-all: $(PROGNAME)
+all: $(PROGNAME) $(EXAMPLES)
 
 $(PROGNAME): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS)

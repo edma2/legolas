@@ -21,3 +21,5 @@ typedef struct {
 
 int ElfObject_init(FILE *fp, ElfObject *elf);
 int ElfObject_free(ElfObject *elf);
+
+void ElfObject_test(void);

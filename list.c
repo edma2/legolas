@@ -48,7 +48,6 @@ void List_test(void) {
   np = head;
   for (i = 0; i < 10; i++) {
     assert((int)np->data == i);
-    printf("%d\n", i);
     np = np->next;
   }
 
@@ -56,4 +55,6 @@ void List_test(void) {
   // make sure free empty list doesn't choke
   head = NULL;
   List_free(&head, NULL);
+
+  printf("%s: All tests pass.\n", __FILE__);
 }

@@ -1,6 +1,7 @@
 #include <object.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <assert.h>
 
 /* Get file size given file pointer. */
 static long file_size(FILE *fp) {
@@ -45,4 +46,23 @@ int ElfObject_init(FILE *fp, ElfObject *elf) {
 /* Unmap file image. */
 int ElfObject_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
+}
+
+void ElfObject_test(void) {
+  ElfObject elf;
+  FILE *in;
+
+  in = fopen("example.o", "r+");
+  ElfObject_init(in, &elf);
+
+  unsigned char *magic = elf.header->e_ident;
+  assert(magic[0] == 0x7f);
+  assert(magic[1] == 'E');
+  assert(magic[2] == 'L');
+  assert(magic[3] == 'F');
+
+  fclose(in);
+  ElfObject_free(&elf);
+
+  printf("%s: All tests pass.\n", __FILE__);
 }

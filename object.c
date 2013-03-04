@@ -36,6 +36,7 @@ SectionHeader *ElfObject_sh(ElfObject *elf, const char *name) {
  * You can safely close fp after calling this function. */
 int ElfObject_init(FILE *fp, ElfObject *elf) {
   int fd;
+  SectionHeader *sh;
 
   elf->size = file_size(fp);
   if (elf->size < 0) {
@@ -56,12 +57,30 @@ int ElfObject_init(FILE *fp, ElfObject *elf) {
   elf->sh_names = (void *)elf->header +
     elf->sh_table[elf->header->e_shstrndx].sh_offset;
 
+  sh = ElfObject_sh(elf, ".symtab");
+  elf->symbols.size = sh->sh_size / sh->sh_entsize;
+  elf->symbols.sym_table = (void *)elf->header + sh->sh_offset;
+
+  sh = ElfObject_sh(elf, ".strtab");
+  elf->symbols.sym_names = (void *)elf->header + sh->sh_offset;
+
   return 0;
 }
 
 /* Unmap file image. */
 int ElfObject_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
+}
+
+void ElfObject_print_symbols(ElfObject *elf) {
+  int i;
+  Elf32_Sym *sym;
+
+  for (i = 0; i < elf->symbols.size; i++) {
+    sym = &(elf->symbols.sym_table[i]);
+    char *name = elf->symbols.sym_names + sym->st_name;
+    printf("%s\n", name);
+  }
 }
 
 void ElfObject_test(void) {
@@ -80,6 +99,9 @@ void ElfObject_test(void) {
 
   sh = ElfObject_sh(&elf, ".text");
   assert(strcmp(elf.sh_names + sh->sh_name, ".text") == 0);
+
+  printf("listing symbols...\n");
+  ElfObject_print_symbols(&elf);
 
   fclose(in);
   ElfObject_free(&elf);

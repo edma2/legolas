@@ -5,6 +5,12 @@ typedef Elf32_Shdr SectionHeader;
 typedef Elf32_Phdr ProgramHeader;
 typedef Elf32_Ehdr ElfHeader;
 
+typedef struct {
+  uint32_t size;
+  Elf32_Sym *sym_table;
+  char *sym_names;
+} Symbols;
+
 /* An object file. */
 typedef struct {
   /* Offset 0 of file image. */
@@ -18,6 +24,9 @@ typedef struct {
 
   /* Section header string table. */
   char *sh_names;
+
+  Symbols symbols;
+
 } ElfObject;
 
 int ElfObject_init(FILE *fp, ElfObject *elf);

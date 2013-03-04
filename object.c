@@ -17,7 +17,7 @@ static long file_size(FILE *fp) {
   return size;
 }
 
-SectionHeader *ElfObject_sh_by_name(ElfObject *elf, const char *name) {
+SectionHeader *ElfObject_sh(ElfObject *elf, const char *name) {
   int i;
   SectionHeader *sh;
 
@@ -78,7 +78,7 @@ void ElfObject_test(void) {
   assert(magic[2] == 'L');
   assert(magic[3] == 'F');
 
-  sh = ElfObject_sh_by_name(&elf, ".text");
+  sh = ElfObject_sh(&elf, ".text");
   assert(strcmp(elf.sh_names + sh->sh_name, ".text") == 0);
 
   fclose(in);

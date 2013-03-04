@@ -22,6 +22,6 @@ typedef struct {
 
 int ElfObject_init(FILE *fp, ElfObject *elf);
 int ElfObject_free(ElfObject *elf);
-SectionHeader *ElfObject_sh_by_name(ElfObject *elf, const char *name);
+SectionHeader *ElfObject_sh(ElfObject *elf, const char *name);
 
 void ElfObject_test(void);

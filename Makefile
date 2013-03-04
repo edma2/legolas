@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -I.
 
-OBJECTS = list.o object.o main.o
+OBJECTS = list.o object.o main.o storage.o
 EXAMPLES = example example.o
 
 PROGNAME = main

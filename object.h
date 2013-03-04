@@ -1,3 +1,6 @@
+#ifndef OBJECT_H
+#define OBJECT_H
+
 #include <elf.h>
 #include <stdio.h>
 
@@ -33,4 +36,6 @@ int ElfObject_init(FILE *fp, ElfObject *elf);
 int ElfObject_free(ElfObject *elf);
 SectionHeader *ElfObject_sh(ElfObject *elf, const char *name);
 
-void ElfObject_test(void);
+void ElfObject_test(ElfObject *elf);
+
+#endif

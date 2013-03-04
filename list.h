@@ -1,3 +1,6 @@
+#ifndef LIST_H
+#define LIST_H
+
 /* A singly-linked list. */
 struct List {
   void *data;
@@ -9,3 +12,5 @@ void *List_append(List **npp, void *data);
 void List_free(List **npp, void (*free_data)(void *));
 
 void List_test(void);
+
+#endif

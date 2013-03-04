@@ -83,28 +83,19 @@ static void Symbols_print(Symbols *symbols) {
   }
 }
 
-void ElfObject_test(void) {
-  ElfObject elf;
-  FILE *in;
+void ElfObject_test(ElfObject *elf) {
   SectionHeader *sh;
 
-  in = fopen("example.o", "r+");
-  ElfObject_init(in, &elf);
-
-  unsigned char *magic = elf.header->e_ident;
+  unsigned char *magic = elf->header->e_ident;
   assert(magic[0] == 0x7f);
   assert(magic[1] == 'E');
   assert(magic[2] == 'L');
   assert(magic[3] == 'F');
 
-  sh = ElfObject_sh(&elf, ".text");
-  assert(strcmp(elf.sh_names + sh->sh_name, ".text") == 0);
+  sh = ElfObject_sh(elf, ".text");
+  assert(strcmp(elf->sh_names + sh->sh_name, ".text") == 0);
 
   printf("listing symbols...\n");
-  Symbols_print(&elf.symbols);
-
-  fclose(in);
-  ElfObject_free(&elf);
-
+  Symbols_print(&(elf->symbols));
   printf("%s: All tests pass.\n", __FILE__);
 }

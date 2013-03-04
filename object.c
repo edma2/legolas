@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <assert.h>
+#include <string.h>
 
 /* Get file size given file pointer. */
 static long file_size(FILE *fp) {
@@ -14,6 +15,21 @@ static long file_size(FILE *fp) {
   rewind(fp);
 
   return size;
+}
+
+SectionHeader *ElfObject_sh_by_name(ElfObject *elf, const char *name) {
+  int i;
+  SectionHeader *sh;
+
+  for (i = 0; i < elf->header->e_shnum; i++) {
+    sh = &(elf->sh_table[i]);
+    char *found = elf->sh_names + sh->sh_name;
+    if (strcmp(found, name) == 0) {
+      return sh;
+    }
+  }
+
+  return NULL;
 }
 
 /* Initialize object file by memory mapping file contents.
@@ -51,6 +67,7 @@ int ElfObject_free(ElfObject *elf) {
 void ElfObject_test(void) {
   ElfObject elf;
   FILE *in;
+  SectionHeader *sh;
 
   in = fopen("example.o", "r+");
   ElfObject_init(in, &elf);
@@ -60,6 +77,9 @@ void ElfObject_test(void) {
   assert(magic[1] == 'E');
   assert(magic[2] == 'L');
   assert(magic[3] == 'F');
+
+  sh = ElfObject_sh_by_name(&elf, ".text");
+  assert(strcmp(elf.sh_names + sh->sh_name, ".text") == 0);
 
   fclose(in);
   ElfObject_free(&elf);

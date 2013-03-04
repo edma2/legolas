@@ -72,13 +72,13 @@ int ElfObject_free(ElfObject *elf) {
   return munmap(elf->header, elf->size);
 }
 
-static void ElfObject_print_symbols(ElfObject *elf) {
+static void Symbols_print(Symbols *symbols) {
   int i;
   Elf32_Sym *sym;
 
-  for (i = 0; i < elf->symbols.size; i++) {
-    sym = &(elf->symbols.sym_table[i]);
-    char *name = elf->symbols.sym_names + sym->st_name;
+  for (i = 0; i < symbols->size; i++) {
+    sym = &(symbols->sym_table[i]);
+    char *name = symbols->sym_names + sym->st_name;
     printf("%s\n", name);
   }
 }
@@ -101,7 +101,7 @@ void ElfObject_test(void) {
   assert(strcmp(elf.sh_names + sh->sh_name, ".text") == 0);
 
   printf("listing symbols...\n");
-  ElfObject_print_symbols(&elf);
+  Symbols_print(&elf.symbols);
 
   fclose(in);
   ElfObject_free(&elf);

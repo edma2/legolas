@@ -3,7 +3,7 @@
 #include <storage.h>
 
 /* Where each section will go relative to each other. */
-List *storage_layout(ElfObject *elf) {
+List *section_layout(ElfObject *elf) {
   List *sections = NULL;
   SectionHeader *text, *data;
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 typedef Elf32_Shdr SectionHeader;
+typedef Elf32_Phdr ProgramHeader;
 typedef Elf32_Ehdr ElfHeader;
 
 /* An object file. */

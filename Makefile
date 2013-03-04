@@ -2,6 +2,7 @@ CC = gcc
 CFLAGS = -Wall -I.
 
 OBJECTS = list.o object.o main.o
+EXAMPLES = example example.o
 
 PROGNAME = legolas
 
@@ -17,4 +18,4 @@ example.o: example.asm
 	nasm -f elf example.asm -o example.o
 
 clean:
-	rm -f $(PROGNAME) $(OBJECTS) example example.o
+	rm -f $(PROGNAME) $(OBJECTS) $(EXAMPLES)

@@ -4,7 +4,7 @@ CFLAGS = -Wall -I.
 OBJECTS = list.o object.o main.o
 EXAMPLES = example example.o
 
-PROGNAME = legolas
+PROGNAME = main
 
 all: $(PROGNAME)
 
